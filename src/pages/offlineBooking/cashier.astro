@@ -1,0 +1,56 @@
+---
+import CashierLayout from '../../layouts/CashierLayout.astro';
+import RequireCashierAuth from '../../components/RequireCashierAuth.tsx';
+import { api } from '../../lib/api';
+import type { Studio, Seat } from '../../types';
+
+interface StudioWithAvailability extends Studio {
+  availableCount: number;
+}
+const studios: Studio[] = await api.getStudios();
+
+const seatDataPromises = studios.map(studio => 
+  api.getSeatsForStudio(studio.id)
+);
+
+const allSeatLists: Seat[][] = await Promise.all(seatDataPromises);
+
+const studiosWithAvailability: StudioWithAvailability[] = studios.map((studio, index) => {
+  const seatsForThisStudio: Seat[] = allSeatLists[index];
+  const availableCount = seatsForThisStudio.filter(seat => seat.is_available).length;
+  
+  return {
+    ...studio,
+    availableCount: availableCount
+  };
+});
+---
+<CashierLayout title="Pilih Studio">
+  <RequireCashierAuth client:load>
+    <div class="px-4 sm:px-0">
+      <p class="mt-2 text-lg text-gray-400">Pilih studio untuk pelanggan.</p>
+    </div>
+
+    <div class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">        
+      {studiosWithAvailability.map(studio => {
+        let availabilityClass = "text-green-400";
+        if (studio.availableCount < 10) availabilityClass = "text-yellow-400";
+        if (studio.availableCount < 5) availabilityClass = "text-red-500";
+        
+        return (
+          <a 
+            href={`/offlineBooking/book/${studio.id}`}
+            class="block rounded-lg bg-gray-800 p-6 shadow-lg hover:bg-gray-700 transition-colors border-2 border-dashed border-yellow-500"
+          >
+            <h2 class="text-xl font-semibold text-white">{studio.name}</h2>
+            <p class={`mt-2 font-bold text-lg ${availabilityClass}`}>
+              {studio.availableCount} Kursi Tersisa
+            </p>
+            <span class="mt-4 inline-block text-yellow-400 font-medium">Buat Tiket Offline &rarr;</span>
+          </a>
+        );
+      })}
+    </div>
+    
+  </RequireCashierAuth>
+</CashierLayout>

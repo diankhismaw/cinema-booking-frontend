@@ -37,12 +37,16 @@ Proyek ini **HANYA** frontend. Proyek ini **tidak akan berfungsi** tanpa backend
 ### Menjalankan Frontend
 
 1.  **Clone repositori ini:**
+    Menggunakan ssh
     ```bash
-    using ssh
     git clone [git@github.com:diankhismaw/cinema-booking-frontend.git](git@github.com:diankhismaw/cinema-booking-frontend.git)
-    using https
-    git clone [https://github.com/diankhismaw/cinema-booking-frontend.git](https://github.com/diankhismaw/cinema-booking-frontend.git) 
-    cd REPO-NAME
+    ```
+    Menggunakan https
+    ```bash
+    git clone [https://github.com/diankhismaw/cinema-booking-frontend.git](https://github.com/diankhismaw/cinema-booking-frontend.git)
+    ```
+    ```bash
+    cd cinema-booking-frontend
     ```
 
 2.  **Instal dependensi:**

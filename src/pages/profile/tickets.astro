@@ -1,0 +1,9 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import MyTickets from '../../components/MyTickets.tsx';
+---
+<BaseLayout title="My Tickets">
+    <h1 class="text-3xl font-bold mb-6 text-white">Tiket Saya</h1>
+
+    <MyTickets client:load /> 
+</BaseLayout>
