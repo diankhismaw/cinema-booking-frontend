@@ -1,0 +1,9 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import RegisterForm from '../components/RegisterForm.tsx';
+---
+<BaseLayout title="Register Akun Baru">
+  <div class="mx-auto max-w-md">
+    <RegisterForm client:load />
+  </div>
+</BaseLayout>

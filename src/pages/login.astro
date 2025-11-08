@@ -1,0 +1,9 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import LoginForm from '../components/LoginForm.tsx'; 
+---
+<BaseLayout title="Login">
+  <div class="mx-auto max-w-md">
+    <LoginForm client:load />
+  </div>
+</BaseLayout>

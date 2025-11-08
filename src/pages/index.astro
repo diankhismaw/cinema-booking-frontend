@@ -1,16 +1,69 @@
 ---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { api } from "../lib/api";
+import type { Studio, Seat } from "../types";
 
+interface StudioWithAvailability extends Studio {
+  availableCount: number;
+}
+
+const studios: Studio[] = await api.getStudios();
+
+const seatDataPromises = studios.map((studio) =>
+  api.getSeatsForStudio(studio.id)
+);
+
+const allSeatLists: Seat[][] = await Promise.all(seatDataPromises);
+
+const studiosWithAvailability: StudioWithAvailability[] = studios.map(
+  (studio, index) => {
+    const seatsForThisStudio: Seat[] = allSeatLists[index];
+    const availableCount = seatsForThisStudio.filter(
+      (seat) => seat.is_available
+    ).length;
+
+    return {
+      ...studio,
+      availableCount: availableCount,
+    };
+  }
+);
 ---
+<BaseLayout title="Pilih Studio">
+  <div class="px-4 sm:px-0">
+    <h1
+      class="text-2xl font-bold leading-7 text-white sm:truncate sm:text-3xl sm:tracking-tight"
+    >
+      Pilih Studio
+    </h1>
+    <p class="mt-2 text-lg text-gray-400">
+      Silakan pilih studio untuk melihat kursi yang tersedia.
+    </p>
+  </div>
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+  <div class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    {
+      studiosWithAvailability.map((studio) => {
+        let availabilityClass = "text-green-400";
+        if (studio.availableCount < 10) availabilityClass = "text-yellow-400";
+        if (studio.availableCount < 5) availabilityClass = "text-red-500";
+
+        return (
+          <a
+            href={`/studio/${studio.id}`}
+            class="block rounded-lg bg-gray-800 p-6 shadow-lg hover:bg-gray-700 transition-colors"
+          >
+            <h2 class="text-xl font-semibold text-white">{studio.name}</h2>
+            <p class={`mt-2 font-bold text-lg ${availabilityClass}`}>
+              {studio.availableCount} Kursi Tersisa
+            </p>
+
+            <span class="mt-4 inline-block text-indigo-400 font-medium">
+              Lihat Kursi &rarr;
+            </span>
+          </a>
+        );
+      })
+    }
+  </div>
+</BaseLayout>

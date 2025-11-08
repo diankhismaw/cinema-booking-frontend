@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SeatSelector from '../../components/SeatSelector.tsx';
+import { api } from '../../lib/api';
+import type { Studio } from '../../types';
+import { mockFilmData } from '../../lib/mockFilmData';
+export async function getStaticPaths() {
+  const studios: Studio[] = await api.getStudios();
+  return studios.map(studio => {
+    return {
+      params: { studioId: String(studio.id) },
+      props: { studio: studio }
+    };
+  });
+}
+
+const { studio } = Astro.props;
+const filmInfo = mockFilmData[studio.id];
+
+const today = new Date();
+const formattedDate = today.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' });
+const staticTime = "18:35";
+---
+<BaseLayout title={`Pilih Kursi - ${studio.name}`}>
+  {filmInfo && (
+    <div class="mb-6 p-0 h-[200px] bg-gray-800 rounded-lg cover-movie" style={`background-image: url('${filmInfo.poster_url}');`}>
+      <h1 class="text-3xl p-3 w-100 font-bold text-shadow-lg/30">{filmInfo.film_name}</h1>
+      <div class="flex p-4 item-center justify-between text-lg text-shadow-lg/30 text-gray-300 mt-2">
+        <span>{filmInfo.theater_name}</span>
+        <span>{formattedDate}</span>
+        <span>{staticTime}</span>
+      </div>
+    </div>
+  )}
+
+  <SeatSelector
+    studioId={studio.id}
+    mode="online"
+    client:load 
+  />
+</BaseLayout>
