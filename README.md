@@ -1,43 +1,69 @@
-# Astro Starter Kit: Minimal
+# Frontend Booking Bioskop
 
-```sh
-npm create astro@latest -- --template minimal
-```
+Ini adalah aplikasi frontend untuk sistem booking tiket bioskop. Aplikasi ini dibangun menggunakan **Astro** dengan **React** sebagai *UI framework*.
+Aplikasi ini dirancang untuk terhubung dengan backend Go microservice yang berjalan secara terpisah.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+---
+## Fitur Utama
 
-## 🚀 Project Structure
+* **Otentikasi JWT:** Alur pendaftaran (`/register`) dan login (`/login`) penuh.
+* **Alur Booking Online:** *Customer* dapat melihat studio, memilih kursi yang tersedia (dengan *real-time locking*), dan memesan tiket.
+* **Alur Kasir (Offline):** Alur terpisah di `/offlineBooking/cashier` yang dilindungi oleh *role*.
+* **Kontrol Akses Berbasis Peran (RBAC):** Hanya pengguna dengan *role* "cashier" yang dapat mengakses alur kasir. *Customer* biasa akan otomatis diarahkan ke halaman tiket.
+* **Manajemen Tiket:** Halaman "/profile/tickets" yang terproteksi bagi pengguna untuk melihat semua tiket mereka yang sudah di-booking.
+* **Tampilan Detail Tiket:** Modal *pop-up* yang menampilkan detail booking, status, dan QR code untuk validasi.
+* **Ketersediaan Kursi:** Halaman utama secara dinamis menampilkan jumlah kursi yang tersisa untuk setiap studio.
+* **Manajemen State:** Menggunakan **Zustand** untuk manajemen *state* otentikasi global.
+* **Desain Responsif:** Dibuat *mobile-first* menggunakan **Tailwind CSS**.
 
-Inside of your Astro project, you'll see the following folders and files:
+---
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+## Tech Stack
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+* **Framework:** Astro
+* **UI:** React (Astro Islands)
+* **Styling:** Tailwind CSS
+* **Manajemen State:** Zustand
+* **Bahasa:** TypeScript
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+---
 
-Any static assets, like images, can be placed in the `public/` directory.
+## 🚀 Cara Menjalankan Proyek
 
-## 🧞 Commands
+Proyek ini **HANYA** frontend. Proyek ini **tidak akan berfungsi** tanpa backend yang berjalan.
+1.  Pastikan Anda telah meng-kloning dan menjalankan *backend* dari: `https://github.com/gcode/cinema-booking`
+2.  Pastikan *backend* (API Gateway) berjalan di `http://localhost:3000`.
 
-All commands are run from the root of the project, from a terminal:
+### Menjalankan Frontend
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+1.  **Clone repositori ini:**
+    ```bash
+    using ssh
+    git clone [git@github.com:diankhismaw/cinema-booking-frontend.git](git@github.com:diankhismaw/cinema-booking-frontend.git)
+    using https
+    git clone [https://github.com/diankhismaw/cinema-booking-frontend.git](https://github.com/diankhismaw/cinema-booking-frontend.git) 
+    cd REPO-NAME
+    ```
 
-## 👀 Want to learn more?
+2.  **Instal dependensi:**
+    ```bash
+    npm install
+    ```
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+3.  **Jalankan server pengembangan:**
+    ```bash
+    npm run dev
+    ```
+
+4.  Buka [http://localhost:4321](http://localhost:4321) di browser Anda.
+
+### Akun Tes
+
+* **Customer:** Daftar akun baru melalui halaman `/register`.
+* **Kasir:** Daftar akun baru (misal: `cashier@example.com`), lalu ubah *role* akun tersebut secara manual di database PostgreSQL menjadi `"cashier"`.
+
+---
+
+## ⚠️ Keterbatasan / Isu yang Diketahui
+
+* **Seat ID vs Seat Number:** Halaman "My Tickets" dan modal detail tiket saat ini menampilkan **Seat ID** (misal: `[63, 80]`), bukan **Seat Number** yang sebenarnya. Ini adalah keterbatasan desain dari response API (`/api/booking/my-bookings`) yang tidak mengembalikan data label **Seat Number** (misal: `["A1", "A5"]`) yang sesuai.
