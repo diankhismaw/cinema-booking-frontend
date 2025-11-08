@@ -22,20 +22,34 @@ const formattedDate = today.toLocaleDateString('id-ID', { day: '2-digit', month:
 const staticTime = "18:35";
 ---
 <BaseLayout title={`Pilih Kursi - ${studio.name}`}>
-  {filmInfo && (
-    <div class="mb-6 p-0 h-[200px] bg-gray-800 rounded-lg cover-movie" style={`background-image: url('${filmInfo.poster_url}');`}>
-      <h1 class="text-3xl p-3 w-100 font-bold text-shadow-lg/30">{filmInfo.film_name}</h1>
-      <div class="flex p-4 item-center justify-between text-lg text-shadow-lg/30 text-gray-300 mt-2">
-        <span>{filmInfo.theater_name}</span>
-        <span>{formattedDate}</span>
-        <span>{staticTime}</span>
+  <div class="relative min-h-screen bg-gray-900 text-white">
+    <div
+      class="absolute inset-0 bg-cover bg-center opacity-30" 
+      style={`background-image: url('${filmInfo.poster_url}');`}
+    ></div>
+
+    <div class="relative z-10 p-4 pb-16 md:p-8 max-w-4xl mx-auto">
+      <a 
+        href="/" 
+        class="absolute top-4 left-[-15%] z-20 px-4 py-2 bg-gray-700 bg-opacity-75 rounded-full text-white font-bold shadow-lg hover:bg-gray-600 transition-colors"
+        style="text-shadow: 0 0 5px black;">&larr; Back</a>
+      {filmInfo && (
+        <div class="mb-8 p-6 bg-gray-800 bg-opacity-75 rounded-lg shadow-xl" style="text-shadow: 0 0 5px black;">
+          <h1 class="text-3xl font-bold">{filmInfo.film_name}</h1>
+          <div class="flex justify-between text-lg text-gray-200 mt-2">
+            <span>{filmInfo.theater_name}</span>
+            <span>{formattedDate}</span>
+            <span>{staticTime}</span>
+          </div>
+        </div>
+      )}
+      <div class="bg-gray-800 bg-opacity-75 rounded-lg p-6 shadow-xl">
+        <SeatSelector
+          studioId={studio.id}
+          mode="online"
+          client:load
+        />
       </div>
     </div>
-  )}
-
-  <SeatSelector
-    studioId={studio.id}
-    mode="online"
-    client:load 
-  />
+  </div>
 </BaseLayout>
